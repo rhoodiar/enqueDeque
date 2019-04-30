@@ -1,0 +1,243 @@
+///priorities of the Aircrafts..
+
+// Java program to demonstrate working of Air traffic control system which uses the concept of
+// comparator based priority queue constructor
+
+/*These are the priorities used in the priorities.
+ * 
+ * 	Passenger AC Large = 5
+ *  Passenger AC small = 4
+ *  
+ *  Cargo AC Large = 3
+ *  Cargo AC small = 2
+ * */
+
+
+
+import java.util.*; 
+
+public class ATControl { 
+	
+	public PriorityQueue<Aircraft> pq = new
+			PriorityQueue<Aircraft>(5, new StudentComparator()); 
+	
+	
+	void aqm_request_process() {
+		//declaring variables
+		String typeAC = null;	//used for giving types to the aircrafts
+		String sizeAC = null;
+		
+		int prio = 0;	//used for priority elements.
+		Scanner in = new Scanner(System.in); 
+		int choice;
+		//loop variable used for exiting the program.
+		boolean loopVal = true;
+
+		while(loopVal) {
+		System.out.println("~~~~Welcome to air-traffic control system !!!~~~~");
+		System.out.println();
+		System.out.println("Please choose any one option.");;
+		System.out.println("1) display current trafic"
+				+ "\n2) Refresh the system. "
+				+ "\n3) Enque aircraft"
+				+ "\n4) Deque aircraft"
+				+ "\n5) exit."
+				+ "\n6) deque all aircraft in the sorted order.\n\nYour choice:: (enter numbers: 1 or 2 or 3 or 4 or 5 or 6) :: ");
+		choice = in.nextInt();	
+		
+			//menu condition used in switch statements.
+			switch(choice) {
+			//first case for the displaying overall aircrafts available
+			case 1:
+				if (!pq.isEmpty())  {
+				System.out.println("The queue elements:"); 
+		        Iterator itr = pq.iterator(); 
+		        //loop until the last element in the queue.
+		        while (itr.hasNext()) 
+		           ((Aircraft) itr.next()).display(); 
+				}else {
+					System.out.println("no element in the queue..");
+				}
+				break;
+				//loop for refreshing the system
+				//or 1.	System boot used to start the system
+			case 2:
+				pq.clear();
+				
+				break;
+				//2.	Enqueue aircraft used to insert a new AC into the system. 
+			case 3:
+				
+				System.out.println("...Please enter the following information...");
+				System.out.print("Name of the Aicraft::  ");
+				in.nextLine();
+				String name = in.nextLine();
+				System.out.print("Type of the Aicraft:: P (PASSENGER) or C (CARGO)::   ");
+				char type_char = in.next().charAt(0);
+				
+				switch(type_char) {
+				case 'P':
+				case 'p':
+					typeAC = "Passenger";
+				break;
+				case 'C':
+				case 'c':
+					typeAC = "Cargo";
+					break;
+				default:
+					System.out.println("Wrong character is entered...");
+					break;			
+					
+				}
+				
+				System.out.println("input:out: "+type_char);
+				
+				System.out.print("Size of the Aicraft:: S (Small) or L (Large)::   ");
+				char size = in.next().charAt(0);
+				
+				switch(size) {
+				case 'S':
+				case 's':
+					sizeAC = "Small";
+					if(type_char == 'p'|| type_char == 'P' )
+						prio = 4;
+					else
+						prio = 2;
+				break;
+				case 'L':
+				case 'l':
+					sizeAC = "Large";
+					if(type_char == 'p'|| type_char == 'P' )
+						prio = 5;
+					else
+						prio = 3;
+					break;
+				default:
+					System.out.println("Wrong character is entered...");
+					break;			
+					
+				}
+				
+				Aircraft aircraft10 = new Aircraft(name,typeAC,sizeAC, prio);
+				pq.add(aircraft10);	
+				System.out.println("Correctely added in queue....");
+				aircraft10.display();
+				
+				break;
+				//3.Dequeue aircraft used to remove an AC from the system.
+			case 4:
+				System.out.println("The aircraft to be removed on given priorities");
+				System.out.println("The dequeing Aircraft is:: ");
+				
+					if (!pq.isEmpty())  
+						System.out.println(pq.poll().getName());
+					else
+						System.out.println("No aircraft is available");
+				break;
+				//condition for exiting.
+			case 5:
+				loopVal = false;
+				break;
+			case 6:
+				System.out.println("Sequence of dequeing from the list..");
+				
+				while (!pq.isEmpty()) { 
+				  pq.poll().display(); 		
+				}
+				break;
+			default:
+				System.out.println("wrong number.. please choose from the given list....7");
+				break;
+			
+			}
+
+		
+		}
+		
+		
+	}
+	
+	
+	public static void main(String[] args){ 
+
+		ATControl obj1 = new ATControl();
+
+		
+		// Invoking a parameterized Aircraft constructor with 
+		// type and priorities as the elements of queue 
+		Aircraft aircraft0 = new Aircraft("Airbus first small","Passenger","small", 4); 
+
+		// Adding a Aircraft object containing fields 
+		// type and priorities to priority queue 
+		obj1.pq.add(aircraft0); 
+
+		// Adding an aircraft object containing fields 
+		// type and priorities to priority queue 
+		Aircraft aircraft2 = new Aircraft("Boeing 767","Cargo","small", 2); 
+		obj1.pq.add(aircraft2);		 
+				
+		Aircraft aircraftnew = new Aircraft("Boeing 767 2nd","Cargo","small", 2); 
+		obj1.pq.add(aircraftnew);		
+				
+		Aircraft aircraft3 = new Aircraft("Ceing C940","Passenger","Large", 5); 
+		obj1.pq.add(aircraft3); 
+
+		// Printing names of students in priority order,poll() 
+		// method is used to access the head element of queue 
+		System.out.println("Students served in their priority order"); 
+		
+
+		//calling the function for menu operations.
+		obj1.aqm_request_process();
+		
+	}
+} 
+
+class StudentComparator implements Comparator<Aircraft>{ 
+			
+			// Overriding compare()method of Comparator 
+						// for descending order of priorities 
+			public int compare(Aircraft s1, Aircraft s2) { 
+				if (s1.priorities < s2.priorities) 
+					return 1; 
+				else if (s1.priorities > s2.priorities) 
+					return -1; 
+								return 0; 
+				} 
+		} 
+
+class Aircraft { 
+	
+	public String ACname;
+	public String type; 
+	public String size;
+	public int priorities; 
+	public int type_priority;
+	public int size_priority;
+	
+	
+	// A parameterized student constructor 
+	public Aircraft(String name, String type,String size, int priorities) { 
+	
+		this.ACname = name;
+		this.type = type; 
+		//this.priorities = priorities; 
+		this.size = size;
+		this.priorities = priorities;
+	} 
+	
+	public String getName() { 
+		return ACname; 
+	} 
+	
+	public String getSize() {
+		return size;
+	}
+	
+	void display() {
+		
+		System.out.println("\n " +ACname + "\t" + type + "\t" +size+"\t"+priorities);
+ 	}
+	
+	
+} 
