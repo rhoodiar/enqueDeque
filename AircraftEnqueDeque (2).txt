@@ -1,0 +1,155 @@
+package aircraftenquedeque;
+
+import java.util.Scanner;
+
+public class AircraftEnqueDeque {
+
+    AirCraft start; // to keep the reference of first element of linked list 
+     String req;    // input given by user is stored in it
+
+    Scanner input = new Scanner(System.in);
+
+    public boolean isEmpty() {  //Check whether the linked list is empty or not
+        return start == null;
+    }
+
+    public void boot() {    // used recursion to ask user to boot the system, System don't contine unless user boot it
+        System.out.println("Enter \"Start\" to boot the system.");
+        String start = input.next();
+        if (start.equalsIgnoreCase("Start")) {
+            System.out.println("The system has been initiated");
+        } else {
+            boot();
+        }
+    }
+
+    public void aqm_request_process() { // use recursion to get request from user and call the method relative to that request. This method first ask user to start the system, then keep taking the enque and deque reqest from user. 
+        boot();
+        System.out.println("Enter the request: Enque or Deque");
+        req = input.next();      // 
+        if (req.equalsIgnoreCase("enque")) {
+            enqueAC();  // call the enque method if user enter the word enque irrespective of the case
+        } else if (req.equalsIgnoreCase("deque")) {
+            dequeAC();  // call the deque method if user enter the word deque irrespective of the case
+        }
+        //display();
+        aqm_request_process();  //recursion... to keep taking the input from user
+    }
+
+    public void dequeAC() {     // deque the first element in the ordered linked list and update the start reference. Check if there is something left to deque or not and display the relative result
+        if (!isEmpty()) {
+
+            System.out.println("Dequed AC is: ");
+            System.out.println("id: " + start.id + ", type: " + start.type + ", size: " + start.size);
+            start = start.next;
+        } else {
+            System.out.println("Nothing left to deque");
+        }
+    }
+
+    public void enqueAC() { // creates a object and sets its attributes id, type and size according to user input and call the  enqueInOrder(AirCraft ac) method to insert this object in precedence order
+        AirCraft obj = new AirCraft();
+        System.out.println("Enter the Aircraft id: ");
+        obj.id = input.next();
+        System.out.println("Enter the Aircraft type: Passenger or Cargo ");
+        obj.type = input.next();
+        System.out.println("Enter the Aircraft size: small or large ");
+        obj.size = input.next();
+        enqueInOrder(obj);
+    }
+
+    public void enqueInOrder(AirCraft ac) {     // takes AirCraft type object as argument and insert the object in the linked list according to the precedence of that object
+
+        if (!isEmpty()) {   // check whether the linked list contains element or not, continue from here is linkedlist already have some elements
+
+            AirCraft ref = start;
+            AirCraft prevRef = null;
+
+            while (ref != null) {
+                if (ac.type.equalsIgnoreCase("passenger")) {    // place the passenger type aircraft in the order based on the precedence of AC
+
+                    if (ref.type.equalsIgnoreCase("cargo")) {
+                        ac.next = ref;
+                        if (prevRef != null) {
+                            prevRef.next = ac;
+                        } else {
+                            start = ac;
+                        }
+                        ref = null;
+
+                    } else if (ref.type.equalsIgnoreCase("passenger")) {
+                        if (ac.size.equalsIgnoreCase("large") && ref.size.equalsIgnoreCase("small")) {
+                            ac.next = ref;
+                            if (prevRef != null) {
+                                prevRef.next = ac;
+                            } else {
+                                start = ac;
+                            }
+                            ref = null;
+                        } else {
+                            if (ref.next == null) {
+                                ref.next = ac;
+
+                                ref = null;
+                            } else {
+
+                                prevRef = ref;
+                                ref = ref.next;
+                            }
+
+                        }
+
+                    }
+
+                }   // end of if aircraft type is passenger
+                else if (ac.type.equalsIgnoreCase("cargo")) {   // place the cargo type AC in the order based on the precedence 
+
+                    if (ref.type.equalsIgnoreCase("cargo")) {
+                        if (ac.size.equalsIgnoreCase("large") && ref.size.equalsIgnoreCase("small")) {
+                            ac.next = ref;
+                            if (prevRef != null) {
+                                prevRef.next = ac;
+                            } else {
+                                start = ac;
+                            }
+                            ref = null;
+                        } else if (ac.size.equalsIgnoreCase("small") && ref.size.equalsIgnoreCase("small")) {
+                            if (ref.next == null) {
+                                ref.next = ac;
+                            }
+                            ref = null;
+
+                        }
+
+                    } else if (ref.next == null) {
+                        ref.next = ac;
+                        ref = null;
+                    } else {
+
+                        prevRef = ref;
+                        ref = ref.next;
+                    }
+                }   // end of if aircraft type is cargo
+            }   //end of while loop
+        } // end of if not empty
+        else {
+            start = ac;
+        }
+    }
+
+    public void display() { // display the contetnts of linked list. Useful for debugging purpose.
+        AirCraft ref = start;
+        while (ref != null) {
+            System.out.print("id: " + ref.id + ", type: " + ref.type + ", size: " + ref.size + "______");
+            ref = ref.next;
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        AircraftEnqueDeque obj = new AircraftEnqueDeque();
+        obj.aqm_request_process();
+
+    }
+
+}
